@@ -30,6 +30,18 @@ public class ProcessedFiles {
 
     @Column("extracted_content")
     private String extractedContent;
+    
+    @Column("analysis_results")
+    private String analysisResults;
+    
+    @Column("document_summary")
+    private String documentSummary;
+    
+    @Column("processing_status")
+    private String processingStatus;
+    
+    @Column("llm_output")
+    private String llmOutput;
 
 
     public UUID getFileId() {
@@ -87,6 +99,36 @@ public class ProcessedFiles {
     public void setExtractedContent(String extractedContent) {
         this.extractedContent = extractedContent;
     }
-
-
+    
+    public String getAnalysisResults() {
+        return analysisResults;
+    }
+    
+    public void setAnalysisResults(String analysisResults) {
+        this.analysisResults = analysisResults;
+    }
+    
+    public String getDocumentSummary() {
+        return documentSummary;
+    }
+    
+    public void setDocumentSummary(String documentSummary) {
+        this.documentSummary = documentSummary;
+    }
+    
+    public String getProcessingStatus() {
+        return processingStatus;
+    }
+    
+    public void setProcessingStatus(String processingStatus) {
+        this.processingStatus = processingStatus;
+    }
+    
+    public String getLlmOutput() {
+        return llmOutput;
+    }
+    
+    public void setLlmOutput(String llmOutput) {
+        this.llmOutput = llmOutput;
+    }
 }

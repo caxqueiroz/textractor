@@ -112,8 +112,11 @@ public class AbbyyEngine {
     public void cleanup() {
         try {
             if (initialized.get() && enginesPool != null) {
-                enginesPool.shutdown();
-                initialized.set(false);
+                try {
+                    enginesPool.shutdown();
+                } finally {
+                    initialized.set(false);
+                }
             }
         } catch (Exception e) {
             logger.warn("Error during cleanup: {}", e.getMessage());

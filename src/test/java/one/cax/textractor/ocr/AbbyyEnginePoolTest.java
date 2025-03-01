@@ -36,10 +36,11 @@ class AbbyyEnginePoolTest {
     @BeforeEach
     void setUp() {
         // Mock the OcrConfig methods to avoid actual engine initialization
-        when(mockConfig.getLibFolder()).thenReturn("/mock/lib/folder");
-        when(mockConfig.getCustomerProjectId()).thenReturn("mockProjectId");
-        when(mockConfig.getLicensePath()).thenReturn("/mock/license/path");
-        when(mockConfig.getLicensePassword()).thenReturn("mockPassword");
+        // Using lenient() to avoid unnecessary stubbing warnings
+        lenient().when(mockConfig.getLibFolder()).thenReturn("/mock/lib/folder");
+        lenient().when(mockConfig.getCustomerProjectId()).thenReturn("mockProjectId");
+        lenient().when(mockConfig.getLicensePath()).thenReturn("/mock/license/path");
+        lenient().when(mockConfig.getLicensePassword()).thenReturn("mockPassword");
 
         abbyyEnginePool = new AbbyyEnginePool(mockConfig);
         abbyyEnginePool.setProcessedFilesService(mockProcessedFilesService);

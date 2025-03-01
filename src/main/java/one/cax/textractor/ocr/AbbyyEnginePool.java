@@ -149,7 +149,7 @@ public class AbbyyEnginePool {
                     processedFile.setFilePath(filePath);
                     processedFile.setFileSize(fileProcessing.getFileSize());
                     processedFile.setAppId(UUID.fromString(fileProcessing.getAppId()));
-                    processedFile.setExtractedContent(xDoc.toJson());
+                    processedFile.setOcrContent(xDoc.toJson());
                     processedFilesService.addProcessedFile(processedFile);
                 } else {
                     logger.warn("ProcessedFilesService is null, cannot save processed file");

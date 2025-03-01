@@ -1,6 +1,6 @@
 package one.cax.textractor.service;
 
-import one.cax.textractor.datamodel.XDoc;
+
 import one.cax.textractor.db.ProcessedFiles;
 import one.cax.textractor.db.ProcessedFilesRepository;
 import org.slf4j.LoggerFactory;
@@ -29,18 +29,6 @@ public class ProcessedFilesService {
         this.processedFilesRepository = processedFilesRepository;
     }
 
-    /**
-     * Save a processed file to the repository
-     * 
-     * @param processedFile The processed file to save
-     * @return The saved processed file
-     */
-    public ProcessedFiles save(ProcessedFiles processedFile) {
-        ProcessedFiles savedFile = processedFilesRepository.save(processedFile);
-        logger.info("Saved processed file {}", processedFile.getFileId());
-        return savedFile;
-    }
-    
     /**
      * Find a processed file by its ID
      * 
@@ -95,61 +83,9 @@ public class ProcessedFilesService {
         }
     }
     
-    /**
-     * Update the analysis results for a processed file
-     * 
-     * @param fileId The ID of the file to update
-     * @param analysisResults The analysis results to set
-     * @return True if the update was successful, false otherwise
-     */
-    public boolean updateAnalysisResults(String fileId, String analysisResults) {
-        try {
-            UUID uuid = UUID.fromString(fileId);
-            Optional<ProcessedFiles> fileOpt = processedFilesRepository.findById(uuid);
-            
-            if (fileOpt.isPresent()) {
-                ProcessedFiles file = fileOpt.get();
-                file.setAnalysisResults(analysisResults);
-                processedFilesRepository.save(file);
-                logger.info("Updated analysis results for file {}", fileId);
-                return true;
-            } else {
-                logger.error("File with ID {} not found", fileId);
-                return false;
-            }
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid file ID format: {}", fileId, e);
-            return false;
-        }
-    }
     
-    /**
-     * Update the document summary for a processed file
-     * 
-     * @param fileId The ID of the file to update
-     * @param summary The summary to set
-     * @return True if the update was successful, false otherwise
-     */
-    public boolean updateDocumentSummary(String fileId, String summary) {
-        try {
-            UUID uuid = UUID.fromString(fileId);
-            Optional<ProcessedFiles> fileOpt = processedFilesRepository.findById(uuid);
-            
-            if (fileOpt.isPresent()) {
-                ProcessedFiles file = fileOpt.get();
-                file.setDocumentSummary(summary);
-                processedFilesRepository.save(file);
-                logger.info("Updated document summary for file {}", fileId);
-                return true;
-            } else {
-                logger.error("File with ID {} not found", fileId);
-                return false;
-            }
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid file ID format: {}", fileId, e);
-            return false;
-        }
-    }
+    
+    
     
     /**
      * Update the processing status for a processed file
@@ -193,7 +129,7 @@ public class ProcessedFilesService {
             
             if (fileOpt.isPresent()) {
                 ProcessedFiles file = fileOpt.get();
-                file.setLlmOutput(llmOutput);
+                file.setLlmContent(llmOutput);
                 processedFilesRepository.save(file);
                 logger.info("Updated LLM output for file {}", fileId);
                 return true;

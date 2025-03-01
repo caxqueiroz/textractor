@@ -28,20 +28,14 @@ public class ProcessedFiles {
     @Column("app_id")
     private UUID appId;
 
-    @Column("extracted_content")
-    private String extractedContent;
-    
-    @Column("analysis_results")
-    private String analysisResults;
-    
-    @Column("document_summary")
-    private String documentSummary;
+    @Column("ocr_content")
+    private String ocrContent;
     
     @Column("processing_status")
     private String processingStatus;
     
-    @Column("llm_output")
-    private String llmOutput;
+    @Column("llm_content")
+    private String llmContent;
 
 
     public UUID getFileId() {
@@ -92,29 +86,22 @@ public class ProcessedFiles {
         this.appId = appId;
     }
 
-    public String getExtractedContent() {
-        return extractedContent;
+    public String getOcrContent() {
+        return ocrContent;
     }
 
-    public void setExtractedContent(String extractedContent) {
-        this.extractedContent = extractedContent;
+    public void setOcrContent(String ocrContent) {
+        this.ocrContent = ocrContent;
     }
     
-    public String getAnalysisResults() {
-        return analysisResults;
+    public String getLlmContent() {
+        return llmContent;
     }
     
-    public void setAnalysisResults(String analysisResults) {
-        this.analysisResults = analysisResults;
+    public void setLlmContent(String llmContent) {
+        this.llmContent = llmContent;
     }
     
-    public String getDocumentSummary() {
-        return documentSummary;
-    }
-    
-    public void setDocumentSummary(String documentSummary) {
-        this.documentSummary = documentSummary;
-    }
     
     public String getProcessingStatus() {
         return processingStatus;
@@ -122,13 +109,5 @@ public class ProcessedFiles {
     
     public void setProcessingStatus(String processingStatus) {
         this.processingStatus = processingStatus;
-    }
-    
-    public String getLlmOutput() {
-        return llmOutput;
-    }
-    
-    public void setLlmOutput(String llmOutput) {
-        this.llmOutput = llmOutput;
     }
 }

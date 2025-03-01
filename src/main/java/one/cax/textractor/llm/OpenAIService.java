@@ -3,6 +3,8 @@ package one.cax.textractor.llm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PreDestroy;
 import one.cax.textractor.datamodel.FileProcessing;
+import one.cax.textractor.datamodel.XDoc;
+import one.cax.textractor.db.ProcessedFiles;
 
 import org.springframework.ai.ResourceUtils;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -22,7 +24,6 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
-
 
 import one.cax.textractor.service.ProcessedFilesService;
 
@@ -83,7 +84,7 @@ public class OpenAIService {
         this.requestQueue = new LinkedBlockingQueue<>();
     }
 
-    public void init() {
+    public void initialize() {
 
         int cores = Runtime.getRuntime().availableProcessors();
         logger.info("Using {} cores", cores);
@@ -96,6 +97,9 @@ public class OpenAIService {
         listenerAdapter.setSerializer(serializer);
         container.addMessageListener(listenerAdapter, new org.springframework.data.redis.listener.ChannelTopic(llmTopic));
         logger.info("Subscribed to Redis topic: {}", llmTopic);
+        
+        // Start the task processor thread
+        startTaskProcessor();
     }
 
     /**
@@ -154,7 +158,9 @@ public class OpenAIService {
                 // Create a user message with the prompt text
                 UserMessage userMessage = new UserMessage(
                         "Extract all text from this file. Return the result as a JSON object with the following structure: " +
-                                "{ \"text\": \"extracted text\", \"metadata\": { \"fileType\": \"file extension\", \"confidence\": \"high/medium/low\" } }",
+                                "{ \"numberPages\": number-of-pages, \"pages\": [ " +
+                                "{ \"page_number\": page-number-value, \"content\": \"text content of the page\" }, " +
+                                "{ \"page_number\": page-number-value, \"content\": \"text content of the page\" }, ... ] }",
                         new Media(mimeType, resource));
 
                 ;
@@ -172,7 +178,38 @@ public class OpenAIService {
                 logger.info("Response: {}", response);
                 // Process the response
                 String returnedText = response.getResult().getOutput().getText();
-
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    // Parse the returned JSON into an XDoc object
+                    XDoc xdoc = objectMapper.readValue(returnedText, XDoc.class);
+                    
+                    // Set the correct fileId from the original request
+                    // Note: We'll need to create a new XDoc with the correct fileId since fileId is final
+                    XDoc processedDoc = new XDoc(fileId);
+                    
+                    // Copy pages from the parsed XDoc to our new one with the correct fileId
+                    for (XDoc.Page page : xdoc.getPages()) {
+                        processedDoc.addPage(page);
+                    }
+                    
+                    // Convert to JSON for logging
+                    String processedJson = processedDoc.toJson();
+                    logger.info("Processed XDoc: {}", processedJson);
+                    ProcessedFiles processedFiles = new ProcessedFiles();
+                    processedFiles.setFileId(fileId);
+                    processedFiles.setLlmContent(processedJson);
+                    processedFiles.setFileName(fileProcessing.getFileName());
+                    processedFiles.setFileSize(fileProcessing.getFileSize());
+                    processedFiles.setFileHash(fileProcessing.getFileHash());
+                    var filePath = processedFilesService.saveFile(fileProcessing.getFileContent());
+                    processedFiles.setFilePath(filePath);
+                    processedFiles.setAppId(UUID.fromString(fileProcessing.getAppId()));
+                
+                    processedFilesService.addProcessedFile(processedFiles); 
+                    
+                } catch (Exception e) {
+                    logger.error("Error parsing response to XDoc: {}", e.getMessage(), e);
+                }
             }
             catch (Exception e) {
                 logger.error("Error processing file: {}", e.getMessage(), e);

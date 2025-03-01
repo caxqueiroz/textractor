@@ -49,10 +49,12 @@ public class Orchestrator {
      * @param abbyyEngine Abbyy OCR engine
      * @throws Exception if initialization fails
      */
-    public Orchestrator(RedisTemplate<String, String> redisTemplate, @Autowired AbbyyEngine abbyyEngine) throws Exception {
+    public Orchestrator(RedisTemplate<String, String> redisTemplate, @Autowired AbbyyEngine abbyyEngine, @Autowired OpenAIService openAIService) throws Exception {
         this.redisTemplate = redisTemplate;
         this.abbyyEngine = abbyyEngine;
         this.abbyyEngine.initialize();
+        this.openAIService = openAIService;
+        openAIService.initialize();
     }
 
     @Autowired

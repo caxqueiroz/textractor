@@ -27,7 +27,7 @@ class ProcessedFilesTest {
         processedFiles.setFilePath(filePath);
         processedFiles.setFileSize(fileSize);
         processedFiles.setAppId(appId);
-        processedFiles.setExtractedContent(extractedContent);
+        processedFiles.setOcrContent(extractedContent);
         
         // Assert
         assertEquals(fileId, processedFiles.getFileId());
@@ -36,7 +36,7 @@ class ProcessedFilesTest {
         assertEquals(filePath, processedFiles.getFilePath());
         assertEquals(fileSize, processedFiles.getFileSize());
         assertEquals(appId, processedFiles.getAppId());
-        assertEquals(extractedContent, processedFiles.getExtractedContent());
+        assertEquals(extractedContent, processedFiles.getOcrContent());
     }
 
     @Test
@@ -51,6 +51,6 @@ class ProcessedFilesTest {
         assertNull(processedFiles.getFilePath());
         assertEquals(0L, processedFiles.getFileSize());
         assertNull(processedFiles.getAppId());
-        assertNull(processedFiles.getExtractedContent());
+        assertNull(processedFiles.getOcrContent());
     }
 }

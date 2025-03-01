@@ -5,7 +5,6 @@ import one.cax.textractor.api.dto.ApiResponse;
 import one.cax.textractor.api.dto.ResponseEntityUtil;
 import one.cax.textractor.datamodel.FileProcessing;
 import one.cax.textractor.datamodel.ProcessingStatus;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +57,7 @@ public class TeXtractorController {
 
         try {
 
-            var fileId = orchestrator.initialize(initialSetup(file, appId));
+            var fileId = orchestrator.process(initialSetup(file, appId));
             return ResponseEntityUtil.successResponse(fileId.toString());
 
         } catch (IOException e) {

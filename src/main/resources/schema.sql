@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_file_hash ON processed_files (file_hash);

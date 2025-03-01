@@ -8,8 +8,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 /**
- * created by Carlos Queiroz on 2025-03-01
- *
+ * 
+ * Created by Carlos Queiroz on 2025-03-01
+ * 
  */
 public class FileProcessing {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -115,5 +116,9 @@ public class FileProcessing {
                 ", status=" + status +
                 ", message='" + message + '\'' +
                 '}';
+    }
+
+    public String getFileHash() {
+        return fileHash;
     }
 }

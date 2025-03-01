@@ -33,5 +33,6 @@ build/
 .vscode/
 
 application-dev.properties
+application-test.properties
 
 lib/

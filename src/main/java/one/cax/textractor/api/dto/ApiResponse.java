@@ -1,5 +1,8 @@
 package one.cax.textractor.api.dto;
 
+/**
+ * Response entity for API responses.
+ */
 public class ApiResponse<T> {
     private final boolean success;
     private T data;

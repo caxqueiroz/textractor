@@ -30,15 +30,22 @@ public class AbbyyEnginePool {
     private final OcrConfig config;
     private volatile boolean running = true;
 
-    private final ProcessedFilesService processedFilesService;
+    private ProcessedFilesService processedFilesService;
     
     /**
      * Constructor for AbbyyEnginePool.
      * @param config OCR configuration
      */
-    public AbbyyEnginePool(ProcessedFilesService processedFilesService, @Autowired OcrConfig config) {
-        this.processedFilesService = processedFilesService;
+    public AbbyyEnginePool(@Autowired OcrConfig config) {
         this.config = config;
+    }
+
+    /**
+     * Sets the ProcessedFilesService.
+     * @param processedFilesService The service to use for processed files
+     */
+    public void setProcessedFilesService(ProcessedFilesService processedFilesService) {
+        this.processedFilesService = processedFilesService;
     }
 
     /**
@@ -132,16 +139,21 @@ public class AbbyyEnginePool {
                 }
                 
                 logger.info("Completed processing file: {}", fileProcessing.getFileHash());
-                var filePath = processedFilesService.saveFile(fileProcessing.getFileContent());
+                
+                if (processedFilesService != null) {
+                    var filePath = processedFilesService.saveFile(fileProcessing.getFileContent());
 
-                ProcessedFiles processedFile = new ProcessedFiles();
-                processedFile.setFileHash(fileProcessing.getFileHash());
-                processedFile.setFileName(fileProcessing.getFileName());
-                processedFile.setFilePath(filePath);
-                processedFile.setFileSize(fileProcessing.getFileSize());
-                processedFile.setAppId( UUID.fromString(fileProcessing.getAppId()));
-                processedFile.setExtractedContent(xDoc.toJson());
-                processedFilesService.addProcessedFile(processedFile);
+                    ProcessedFiles processedFile = new ProcessedFiles();
+                    processedFile.setFileHash(fileProcessing.getFileHash());
+                    processedFile.setFileName(fileProcessing.getFileName());
+                    processedFile.setFilePath(filePath);
+                    processedFile.setFileSize(fileProcessing.getFileSize());
+                    processedFile.setAppId(UUID.fromString(fileProcessing.getAppId()));
+                    processedFile.setExtractedContent(xDoc.toJson());
+                    processedFilesService.addProcessedFile(processedFile);
+                } else {
+                    logger.warn("ProcessedFilesService is null, cannot save processed file");
+                }
                 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

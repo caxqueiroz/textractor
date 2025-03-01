@@ -12,18 +12,30 @@ public class AppProfile {
     private UUID id;
 
     private String profileName;
-    private String ProfileDescription;
+    private String profileDescription;
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getProfileName() {
         return profileName;
     }
 
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
     public String getProfileDescription() {
-        return ProfileDescription;
+        return profileDescription;
+    }
+
+    public void setProfileDescription(String profileDescription) {
+        this.profileDescription = profileDescription;
     }
 
     public String getAppId() {

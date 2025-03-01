@@ -19,7 +19,7 @@ public class AppProfileService {
 
     public AppProfile save(AppProfile appProfile) {
         return appProfileRepository.save(appProfile);
-    }
+    }   
 
     public AppProfile findById(UUID id) {
         return appProfileRepository.findById(id).orElse(null);
@@ -46,7 +46,6 @@ public class AppProfileService {
         appProfileRepository.deleteById(id);
     }
 
-    // delete by app id
     public void deleteByAppId(String appId) {
         appProfileRepository.deleteByAppId(appId);
     }

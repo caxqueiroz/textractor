@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: embedded
+
+textractor:
+  filestore:
+    path: ${java.io.tmpdir}/textractor-test
+  redis:
+    ocr:
+      topic: test-ocr-topic
+
+# ABBYY Engine mock configuration
+ABBYY_ENGINE_PROFILE: TextExtraction_Accuracy
+ABBYY_LIB_FOLDER: /mock/lib/folder
+ABBYY_CUSTOMER_PROJECT_ID: mock-project-id
+ABBYY_LICENSE_PATH: /mock/license/path
+ABBYY_LICENSE_PASSWORD: mock-password

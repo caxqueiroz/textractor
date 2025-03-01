@@ -4,6 +4,9 @@ package one.cax.textractor.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration for ABBYY Engine.
+ */
 @Configuration
 public class OcrConfig {
 

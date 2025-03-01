@@ -3,6 +3,9 @@ package one.cax.textractor.api.dto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Utility class for building ResponseEntities.
+ */
 public class ResponseEntityUtil {
     public static <T> ResponseEntity<ApiResponse<T>> successResponse(T data) {
         ApiResponse<T> response = new ApiResponse<>(data);

@@ -8,9 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 /**
- * 
+ *  File processing entity.
  * Created by Carlos Queiroz on 2025-03-01
- * 
  */
 public class FileProcessing {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -82,6 +81,10 @@ public class FileProcessing {
         return appId;
     }
 
+    public String getFileHash() {
+        return fileHash;
+    }
+
 
     private String calculateHash(byte[] fileContent) {
         try {
@@ -116,9 +119,5 @@ public class FileProcessing {
                 ", status=" + status +
                 ", message='" + message + '\'' +
                 '}';
-    }
-
-    public String getFileHash() {
-        return fileHash;
     }
 }

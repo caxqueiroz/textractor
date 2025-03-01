@@ -1,11 +1,10 @@
 package one.cax.textractor.ocr;
 
 import com.abbyy.FREngine.Engine;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PreDestroy;
+
 import one.cax.textractor.config.OcrConfig;
 import one.cax.textractor.datamodel.FileProcessing;
-import one.cax.textractor.service.ProcessedFilesService;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import one.cax.textractor.service.ProcessedFilesService;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -34,18 +37,22 @@ public class AbbyyEngine {
     private AbbyyEnginePool enginesPool;
 
     private final RedisMessageListenerContainer container;
+    private MessageListenerAdapter listenerAdapter;
     private final RedisTemplate<String, FileProcessing> redisTemplate;
+    
+    private final ProcessedFilesService processedFilesService;
     
     // Use AtomicBoolean for thread safety
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
 
     public AbbyyEngine(@Autowired OcrConfig config, RedisMessageListenerContainer container,
-                       RedisTemplate<String, FileProcessing> redisTemplate, @Autowired ProcessedFilesService processedFilesService) throws Exception {
+                       RedisTemplate<String, FileProcessing> redisTemplate,
+                       @Autowired ProcessedFilesService processedFilesService) throws Exception {
         this.config = config;
         this.container = container;
         this.redisTemplate = redisTemplate;
-        enginesPool = new AbbyyEnginePool(processedFilesService, config);
+        this.processedFilesService = processedFilesService;
     }
 
     public synchronized void initialize() throws Exception {
@@ -59,11 +66,12 @@ public class AbbyyEngine {
         Engine.SetJNIDllFolder(config.getLibFolder());
         logger.info("Using ABBYY lib folder: {}", config.getLibFolder());
         logger.info("Initializing engines pool...");
-
+        enginesPool = new AbbyyEnginePool(config);
+        enginesPool.setProcessedFilesService(processedFilesService);
         enginesPool.initialize();
 
         // subscribe to topic
-        MessageListenerAdapter listenerAdapter = new MessageListenerAdapter(this, "handleMessage");
+        this.listenerAdapter = new MessageListenerAdapter(this, "handleMessage");
         ObjectMapper objectMapper = new ObjectMapper();
         Jackson2JsonRedisSerializer<FileProcessing> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, FileProcessing.class);
         listenerAdapter.setSerializer(serializer);

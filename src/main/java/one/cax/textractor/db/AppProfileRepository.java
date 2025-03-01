@@ -12,13 +12,13 @@ import java.util.UUID;
  */
 public interface AppProfileRepository extends CrudRepository<AppProfile, UUID> {
 
-
+    @Query("SELECT * FROM app_profiles WHERE profile_name = :profileName")
     Optional<AppProfile> findByProfileName(String profileName);
 
-    @Query("SELECT * FROM app_profiles WHERE REPLACE(id::text, '-', '') LIKE :appId%")
+    @Query("SELECT * FROM app_profiles WHERE REPLACE(CAST(id AS VARCHAR), '-', '') LIKE CONCAT(:appId, '%') LIMIT 1")
     Optional<AppProfile> findByAppId(String appId);
 
     @Modifying
-    @Query("DELETE FROM app_profiles WHERE REPLACE(id::text, '-', '') LIKE :appId%")
+    @Query("DELETE FROM app_profiles WHERE REPLACE(CAST(id AS VARCHAR), '-', '') LIKE CONCAT(:appId, '%')")
     void deleteByAppId(String appId);
 }

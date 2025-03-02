@@ -19,6 +19,14 @@ public class XDoc {
     private final List<Page> pages;
     
     /**
+     * Default constructor for Jackson deserialization.
+     */
+    public XDoc() {
+        this.fileId = UUID.randomUUID();
+        this.pages = new ArrayList<>();
+    }
+    
+    /**
      * Constructor for XDoc.
      * @param fileId Unique identifier for the document
      */

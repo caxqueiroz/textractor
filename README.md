@@ -65,6 +65,64 @@ The application uses Spring Boot for configuration management:
 - **RedisConfig**: Configuration for Redis messaging
 - **DatabaseConfig**: Configuration for database connections
 
+## Environment Setup
+
+Textractor requires several environment variables to be set up for proper operation. We provide scripts to help you configure these variables easily.
+
+### Required Environment Variables
+
+- `OPENAI_API_KEY`: Your OpenAI API key for LLM processing
+- `REDIS_HOST`: Hostname or IP address of your Redis server
+- `REDIS_PASSWORD`: Password for Redis authentication (if required)
+- `DB_USERNAME`: Database username
+- `DB_PASSWORD`: Database password
+- `TEXTRACTOR_FILESTORE_PATH`: Path where processed files will be stored
+
+### Setting Up Environment Variables
+
+#### Windows (PowerShell)
+
+1. Run the PowerShell script:
+   ```
+   .\setup_env.ps1
+   ```
+2. Follow the prompts to enter your configuration values
+3. The script will set the environment variables for the current PowerShell session
+
+#### Windows (Command Prompt)
+
+1. Run the batch script:
+   ```
+   setup_env.bat
+   ```
+2. Follow the prompts to enter your configuration values
+3. The script will set the environment variables for the current CMD session
+
+#### Linux/macOS
+
+1. Run the bash script:
+   ```
+   source setup_env.sh
+   ```
+2. Follow the prompts to enter your configuration values
+3. The script will set the environment variables for the current shell session
+
+### Running Tests with Environment Variables
+
+To run tests with the configured environment variables:
+
+```
+mvn test -DOPENAI_API_KEY="your-api-key" -DREDIS_HOST="your-redis-host" -DREDIS_PASSWORD="your-redis-password" -DDB_USERNAME="your-db-username" -DDB_PASSWORD="your-db-password"
+```
+
+Alternatively, after running one of the setup scripts, you can simply run:
+
+```
+mvn test
+```
+
+And the environment variables will be used automatically.
+
 ## Testing
 
 The application includes comprehensive unit and integration tests:
@@ -119,4 +177,3 @@ spring.datasource.password=your-password
 - Use H2 database for testing to ensure database compatibility
 - Use lenient mocking in tests to avoid unnecessary stubbing warnings
 - Ensure proper resource cleanup in the OCR engine components
-

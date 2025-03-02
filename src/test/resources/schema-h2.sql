@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS processed_files (
     file_path VARCHAR(255),
     file_size BIGINT NOT NULL,
     app_id UUID NOT NULL,
-    extracted_content CLOB,
+    ocr_content CLOB,
+    llm_content CLOB,
+    processing_status VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

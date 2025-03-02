@@ -1,11 +1,19 @@
 package one.cax.textractor.config;
 
+import one.cax.textractor.datamodel.FileProcessing;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +29,12 @@ import javax.sql.DataSource;
 @TestConfiguration
 @Profile("test")
 public class TestConfig {
+
+    @MockBean
+    private ChatModel chatModel;
+
+    @MockBean
+    private RedisConnectionFactory redisConnectionFactory;
 
     /**
      * Configure H2 in-memory database for tests
@@ -52,29 +66,54 @@ public class TestConfig {
     }
     
     /**
-     * Configure JdbcTemplate with the test datasource
+     * Configure JdbcTemplate
      */
     @Bean
-    @Primary
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
     
     /**
-     * Configure NamedParameterJdbcTemplate with the test datasource
+     * Configure NamedParameterJdbcTemplate
      */
     @Bean
-    @Primary
     public NamedParameterJdbcTemplate namedParameterJdbcTemplate(DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
     
     /**
-     * Configure transaction manager with the test datasource
+     * Configure transaction manager
      */
     @Bean
-    @Primary
     public PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
+    }
+    
+    /**
+     * Configure Redis message listener container for tests
+     */
+    @Bean
+    public RedisMessageListenerContainer redisContainer() {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisConnectionFactory);
+        return container;
+    }
+    
+    /**
+     * Configure Redis template for tests
+     */
+    @Bean
+    public RedisTemplate<String, FileProcessing> redisTemplate() {
+        RedisTemplate<String, FileProcessing> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        
+        Jackson2JsonRedisSerializer<FileProcessing> serializer = 
+            new Jackson2JsonRedisSerializer<>(FileProcessing.class);
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+        
+        return template;
     }
 }

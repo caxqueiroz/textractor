@@ -16,11 +16,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.Topic;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.lang.reflect.Field;
@@ -172,7 +169,7 @@ class OpenAIServiceTest {
 
     private String createSampleXDocJson() throws JsonProcessingException {
         XDoc xdoc = new XDoc(UUID.randomUUID());
-        XDoc.Page page = new XDoc.Page(1, "Sample extracted text");
+        XDoc.XPage page = new XDoc.XPage(1, "Sample extracted text");
         xdoc.addPage(page);
         return xdoc.toJson();
     }

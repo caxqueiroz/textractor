@@ -4,10 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import one.cax.textractor.utilities.NameUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Document representation with pages and content.
@@ -16,32 +22,53 @@ public class XDoc {
 
     private final UUID fileId;
     private int numberPages;
-    private final List<Page> pages;
+    /* The pages of the document */
+    private AtomicReference<List<XPage>> pages = new AtomicReference<>(new ArrayList<>());
+
+    /* The title of the document */
+    private String docTitle;
+
+    /* The filename of the document */
+    private String filename;
+
+
+    /* The metadata of the document */
+    private HashMap<String, Object> metadata;
     
     /**
      * Default constructor for Jackson deserialization.
      */
     public XDoc() {
         this.fileId = UUID.randomUUID();
-        this.pages = new ArrayList<>();
+
     }
-    
+
+    public int getTotalPages() {
+        return this.pages.get().size();
+    }
     /**
      * Constructor for XDoc.
      * @param fileId Unique identifier for the document
      */
     public XDoc(UUID fileId) {
         this.fileId = fileId;
-        this.pages = new ArrayList<>();
     }
 
     /**
      * Add a page to the document.
      * @param page The page to add
      */
-    public void addPage(Page page) {
-        pages.add(page);
+    public void addPage(XPage page) {
+        pages.get().add(page);
         numberPages++;
+    }
+
+    public String getDocTitle() {
+        return docTitle;
+    }
+
+    public void setDocTitle(String docTitle) {
+        this.docTitle = docTitle;
     }
 
     /**
@@ -49,8 +76,9 @@ public class XDoc {
      * @param pageNumber The page number (0-based index)
      * @return The page
      */
-    public Page getPage(int pageNumber) {
-        return pages.get(pageNumber);
+    public XPage getPage(int pageNumber) {
+
+        return pages.get().get(pageNumber);
     }
     
     /**
@@ -69,14 +97,7 @@ public class XDoc {
         return numberPages;
     }
     
-    /**
-     * Get all pages in the document.
-     * @return List of pages
-     */
-    public List<Page> getPages() {
-        return pages;
-    }
-    
+
     /**
      * Convert the XDoc to a JsonNode object representation.
      * @return JsonNode representing the document and its pages
@@ -106,10 +127,17 @@ public class XDoc {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
 
+    public static XDoc fromText(String document) throws JSONException {
+        var json = new JSONObject(document);
+        var xDoc = new XDoc();
+        xDoc.setDocTitle(json.getString(NameUtils.DOC_TITLE));
+        xDoc.setPages(XPage.fromJSONArray(json.getJSONArray(NameUtils.DOC_PAGES)));
+        return xDoc;
+    }
     /**
      * Page representation with content.
      */
-    public static class Page {
+    public static class XPage {
         @JsonProperty("page_number")
         private int pageNumber;
         private String content;
@@ -117,14 +145,14 @@ public class XDoc {
         /**
          * Default constructor for Jackson deserialization.
          */
-        public Page() {
+        public XPage() {
         }
         
         /**
          * Constructor for Page.
          * @param content The text content of the page
          */
-        public Page(int pageNumber, String content) {  
+        public XPage(int pageNumber, String content) {
             this.pageNumber = pageNumber;
             this.content = content;
         }
@@ -159,6 +187,14 @@ public class XDoc {
          */
         public void setContent(String content) {
             this.content = content;
+        }
+
+        public JSONObject toJSON() {
+            var json = new JSONObject();
+            json.put("page_number", pageNumber);
+            json.put("content", content);
+            return json;
+
         }
     }
 }

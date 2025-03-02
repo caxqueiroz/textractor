@@ -4,9 +4,8 @@ import com.abbyy.FREngine.*;
 import one.cax.textractor.config.OcrConfig;
 import one.cax.textractor.datamodel.FileProcessing;
 import one.cax.textractor.datamodel.XDoc;
-import one.cax.textractor.datamodel.XDoc.Page;
+import one.cax.textractor.datamodel.XDoc.XPage;
 import one.cax.textractor.db.ProcessedFiles;
-import one.cax.textractor.db.ProcessedFilesRepository;
 import one.cax.textractor.service.ProcessedFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +133,7 @@ public class AbbyyEnginePool {
                     IFRPage page = pages.Item(i);
                     IPlainText pageText = page.getPlainText();
                     logger.info("Processed page {}", i + 1);
-                    Page xPage = new Page(i, pageText.getText());
+                    XPage xPage = new XPage(i, pageText.getText());
                     xDoc.addPage(xPage);
                 }
                 

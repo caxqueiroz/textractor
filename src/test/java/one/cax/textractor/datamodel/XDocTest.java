@@ -14,7 +14,7 @@ class XDocTest {
         // Arrange
         UUID fileId = UUID.randomUUID();
         XDoc xDoc = new XDoc(fileId);
-        XDoc.Page page = new XDoc.Page(1, "Test content");
+        XDoc.XPage page = new XDoc.XPage(1, "Test content");
         
         // Act
         xDoc.addPage(page);
@@ -29,8 +29,8 @@ class XDocTest {
         // Arrange
         UUID fileId = UUID.randomUUID();
         XDoc xDoc = new XDoc(fileId);
-        XDoc.Page page1 = new XDoc.Page(1, "Page 1 content");
-        XDoc.Page page2 = new XDoc.Page(2, "Page 2 content");
+        XDoc.XPage page1 = new XDoc.XPage(1, "Page 1 content");
+        XDoc.XPage page2 = new XDoc.XPage(2, "Page 2 content");
         
         // Act
         xDoc.addPage(page1);
@@ -58,9 +58,9 @@ class XDocTest {
         XDoc xDoc = new XDoc(fileId);
         
         // Act
-        xDoc.addPage(new XDoc.Page(1, "Page 1"));
-        xDoc.addPage(new XDoc.Page(2, "Page 2"));
-        xDoc.addPage(new XDoc.Page(3, "Page 3"));
+        xDoc.addPage(new XDoc.XPage(1, "Page 1"));
+        xDoc.addPage(new XDoc.XPage(2, "Page 2"));
+        xDoc.addPage(new XDoc.XPage(3, "Page 3"));
         
         // Assert
         assertEquals(3, xDoc.getNumberPages());
@@ -71,8 +71,8 @@ class XDocTest {
         // Arrange
         UUID fileId = UUID.randomUUID();
         XDoc xDoc = new XDoc(fileId);
-        XDoc.Page page1 = new XDoc.Page(1, "Page 1 content");
-        XDoc.Page page2 = new XDoc.Page(2, "Page 2 content");
+        XDoc.XPage page1 = new XDoc.XPage(1, "Page 1 content");
+        XDoc.XPage page2 = new XDoc.XPage(2, "Page 2 content");
         
         // Act
         xDoc.addPage(page1);
@@ -89,7 +89,7 @@ class XDocTest {
         // Arrange
         UUID fileId = UUID.randomUUID();
         XDoc xDoc = new XDoc(fileId);
-        xDoc.addPage(new XDoc.Page(1, "Test content"));
+        xDoc.addPage(new XDoc.XPage(1, "Test content"));
         
         // Act
         String json = xDoc.toJson();
@@ -106,7 +106,7 @@ class XDocTest {
         // Arrange
         UUID fileId = UUID.randomUUID();
         XDoc xDoc = new XDoc(fileId);
-        xDoc.addPage(new XDoc.Page(1, "Test content"));
+        xDoc.addPage(new XDoc.XPage(1, "Test content"));
         
         // Act
         String prettyJson = xDoc.toPrettyJson();
@@ -125,7 +125,7 @@ class XDocTest {
         // Arrange
         UUID fileId = UUID.randomUUID();
         XDoc xDoc = new XDoc(fileId);
-        xDoc.addPage(new XDoc.Page(1, "Test content"));
+        xDoc.addPage(new XDoc.XPage(1, "Test content"));
         
         // Act
         JsonNode jsonNode = xDoc.toJsonNode();
@@ -142,7 +142,7 @@ class XDocTest {
     @Test
     void testPageGettersAndSetters() {
         // Arrange
-        XDoc.Page page = new XDoc.Page(1, "Initial content");
+        XDoc.XPage page = new XDoc.XPage(1, "Initial content");
         
         // Act & Assert
         assertEquals(1, page.getPageNumber());
@@ -160,7 +160,7 @@ class XDocTest {
     @Test
     void testPageDefaultConstructor() {
         // Arrange & Act
-        XDoc.Page page = new XDoc.Page();
+        XDoc.XPage page = new XDoc.XPage();
         
         // Assert
         assertEquals(0, page.getPageNumber());

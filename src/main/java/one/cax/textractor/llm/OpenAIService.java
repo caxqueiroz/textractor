@@ -6,7 +6,6 @@ import one.cax.textractor.datamodel.FileProcessing;
 import one.cax.textractor.datamodel.XDoc;
 import one.cax.textractor.db.ProcessedFiles;
 
-import org.springframework.ai.ResourceUtils;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 
@@ -188,7 +187,7 @@ public class OpenAIService {
                     XDoc processedDoc = new XDoc(fileId);
                     
                     // Copy pages from the parsed XDoc to our new one with the correct fileId
-                    for (XDoc.Page page : xdoc.getPages()) {
+                    for (XDoc.XPage page : xdoc.getPages()) {
                         processedDoc.addPage(page);
                     }
                     

@@ -36,7 +36,7 @@ class ExtractorEngineTest {
     }
 
     @Test
-    void testExtractTextFromPDF_NotNull() throws DocumentExtractionException, IOException {
+    void testExtractTextFromPDF_NotNull() throws DocumentExtractionException, IOException, JSONException {
         ExtractorEngine extractorEngine = new ExtractorEngine(meterRegistry);
         byte[] fileInBytes = createPdf("test data");
         FileOutputStream fos = new FileOutputStream("test.pdf");
@@ -44,9 +44,9 @@ class ExtractorEngineTest {
         fos.close();
         File f = new File("test.pdf");
         JSONObject jsonDoc = extractorEngine.extractTextFromPDF(f.getPath());
-        XDoc xDoc =
+        XDoc xDoc = XDoc.fromText(jsonDoc.toString());
         assertNotNull(xDoc.getDocTitle());
-        assertNotNull(xDoc.getId());
+        assertNotNull(xDoc.getId().toString());
 
     }
 

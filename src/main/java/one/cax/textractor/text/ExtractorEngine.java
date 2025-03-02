@@ -76,6 +76,24 @@ public class ExtractorEngine {
     }
 
     /**
+     * Extracts text from a PDF file provided as a byte array
+     * @param inputInBytes - the input in bytes
+     * @return - the extracted text
+     * @throws DocumentExtractionException - throws an exception if an error occurs
+     */
+    public JSONObject extractTextFromPDF(byte[] inputInBytes) throws DocumentExtractionException {
+        try {
+            return extractTextFromTimer.recordCallable(() -> {
+                JSONObject result = doExtractTextFromPDF(inputInBytes);
+                successfulExtractsCounter.increment();
+                return result;
+            });
+        } catch (Exception e) {
+            throw new DocumentExtractionException("Error extracting text from PDF", e);
+        }
+    }
+
+    /**
      * Extracts text from office docs
      * @param inputFile - the path to the office doc
      * @return the extracted text in json format.
@@ -108,13 +126,28 @@ public class ExtractorEngine {
      * @throws IOException If an error occurs while reading the document.
      */
     private JSONObject doExtractTextFromPDF(String inputFile) throws IOException, JSONException {
-        JSONObject doc = new JSONObject();
 
         File f = new File(inputFile);
         String fileName = f.getName();
         PDDocument pdDocument = Loader.loadPDF(f);
+        var jsonOBject = processPDocument(pdDocument);
+        jsonOBject.put("filename", fileName);
+        return jsonOBject;
+    }
+
+    private JSONObject doExtractTextFromPDF(byte[] inputInBytes) throws IOException, JSONException {
+        JSONObject doc = new JSONObject();
+
+        PDDocument pdDocument = Loader.loadPDF(inputInBytes);
         doc.put("doc_title", getTitle(pdDocument));
-        doc.put("filename", fileName);
+        //doc.put("filename", fileName);// TODO  FIX
+        return processPDocument(pdDocument);
+
+    }
+
+    private JSONObject processPDocument(PDDocument pdDocument) throws IOException, JSONException {
+        JSONObject doc = new JSONObject();
+        doc.put("doc_title", getTitle(pdDocument));
 
         PDFTextStripper pdfStripper = new PDFTextStripper();
         int nPages = pdDocument.getNumberOfPages();

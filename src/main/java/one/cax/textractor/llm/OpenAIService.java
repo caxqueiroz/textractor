@@ -6,7 +6,6 @@ import one.cax.textractor.datamodel.FileProcessing;
 import one.cax.textractor.datamodel.XDoc;
 import one.cax.textractor.db.ProcessedFiles;
 
-import org.springframework.ai.ResourceUtils;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 
@@ -185,15 +184,12 @@ public class OpenAIService {
                     
                     // Set the correct fileId from the original request
                     // Note: We'll need to create a new XDoc with the correct fileId since fileId is final
-                    XDoc processedDoc = new XDoc(fileId);
-                    
-                    // Copy pages from the parsed XDoc to our new one with the correct fileId
-                    for (XDoc.Page page : xdoc.getPages()) {
-                        processedDoc.addPage(page);
-                    }
+                    XDoc processedDoc = new XDoc();
+                    processedDoc.setId(fileId);
+
                     
                     // Convert to JSON for logging
-                    String processedJson = processedDoc.toJson();
+                    String processedJson = processedDoc.toJSON().toString();
                     logger.info("Processed XDoc: {}", processedJson);
                     ProcessedFiles processedFiles = new ProcessedFiles();
                     processedFiles.setFileId(fileId);

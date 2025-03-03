@@ -4,15 +4,16 @@ import com.abbyy.FREngine.*;
 import one.cax.textractor.config.OcrConfig;
 import one.cax.textractor.datamodel.FileProcessing;
 import one.cax.textractor.datamodel.XDoc;
-import one.cax.textractor.datamodel.XDoc.Page;
+import one.cax.textractor.datamodel.XPage;
 import one.cax.textractor.db.ProcessedFiles;
-import one.cax.textractor.db.ProcessedFilesRepository;
 import one.cax.textractor.service.ProcessedFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -129,15 +130,19 @@ public class AbbyyEnginePool {
                 // Get the pages collection
                 IFRPages pages = frDocument.getPages();
                 // Process each page
-                XDoc xDoc = new XDoc(fileProcessing.getFileId());
+                XDoc xDoc = new XDoc();
+                xDoc.setId(fileProcessing.getFileId());
+                List<XPage> xPages = new ArrayList<>();
                 for (int i = 0; i < pages.getCount(); i++) {
                     IFRPage page = pages.Item(i);
                     IPlainText pageText = page.getPlainText();
                     logger.info("Processed page {}", i + 1);
-                    Page xPage = new Page(i, pageText.getText());
-                    xDoc.addPage(xPage);
+                    XPage xPage = new XPage();
+                    xPage.setText(pageText.getText());
+                    xPage.setPageNumber(i + 1);
+                    xPages.add(xPage);
                 }
-                
+                xDoc.setPages(xPages);
                 logger.info("Completed processing file: {}", fileProcessing.getFileHash());
                 
                 if (processedFilesService != null) {
@@ -149,7 +154,7 @@ public class AbbyyEnginePool {
                     processedFile.setFilePath(filePath);
                     processedFile.setFileSize(fileProcessing.getFileSize());
                     processedFile.setAppId(UUID.fromString(fileProcessing.getAppId()));
-                    processedFile.setOcrContent(xDoc.toJson());
+                    processedFile.setOcrContent(xDoc.toJSON().toString());
                     processedFilesService.addProcessedFile(processedFile);
                 } else {
                     logger.warn("ProcessedFilesService is null, cannot save processed file");

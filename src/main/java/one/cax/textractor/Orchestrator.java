@@ -7,6 +7,7 @@ import one.cax.textractor.llm.OpenAIService;
 import one.cax.textractor.ocr.AbbyyEngine;
 import one.cax.textractor.service.AppProfileService;
 import one.cax.textractor.service.ProcessedFilesService;
+import one.cax.textractor.text.ExtractorEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class Orchestrator {
     /** ProcessedFiles service */
     private ProcessedFilesService processedFilesService;
 
+    private ExtractorEngine extractorEngine;
+
     /**
      * Constructor for Orchestrator
      * 
@@ -49,9 +52,10 @@ public class Orchestrator {
      * @param abbyyEngine Abbyy OCR engine
      * @throws Exception if initialization fails
      */
-    public Orchestrator(RedisTemplate<String, String> redisTemplate, @Autowired AbbyyEngine abbyyEngine, @Autowired OpenAIService openAIService) throws Exception {
+    public Orchestrator(RedisTemplate<String, String> redisTemplate, @Autowired AbbyyEngine abbyyEngine, @Autowired OpenAIService openAIService, @Autowired ExtractorEngine extractorEngine) throws Exception {
         this.redisTemplate = redisTemplate;
         this.abbyyEngine = abbyyEngine;
+        this.extractorEngine = extractorEngine;
         this.abbyyEngine.initialize();
         this.openAIService = openAIService;
         openAIService.initialize();

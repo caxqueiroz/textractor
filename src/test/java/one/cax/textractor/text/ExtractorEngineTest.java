@@ -1,6 +1,7 @@
 package one.cax.textractor.text;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import one.cax.textractor.datamodel.XPage;
 import one.cax.textractor.text.DocumentExtractionException;
 import one.cax.textractor.datamodel.XDoc;
 import one.cax.textractor.text.ExtractorEngine;
@@ -58,19 +59,21 @@ class ExtractorEngineTest {
     }
 
     @Test
-    void testExtractTextFromPDF_Empty() throws DocumentExtractionException {
+    void testExtractTextFromPDF_Empty() throws DocumentExtractionException, JSONException {
         ExtractorEngine extractorEngine = new ExtractorEngine(meterRegistry);
         byte[] fileInBytes = createPdf("");
-        XDoc xDoc = extractorEngine.extractTextFromPDF(fileInBytes);
+        JSONObject jsonObject = extractorEngine.extractTextFromPDF(fileInBytes);
+        var xDoc = XDoc.fromText(jsonObject.toString());
         assertEquals(" ", xDoc.getDocTitle());
 
     }
 
     @Test
-    void testExtractTextFromPDF_Large() throws DocumentExtractionException {
+    void testExtractTextFromPDF_Large() throws DocumentExtractionException, JSONException {
         ExtractorEngine extractorEngine = new ExtractorEngine(meterRegistry);
         byte[] fileInBytes = createPdf("a".repeat(1000000));
-        XDoc xDoc = extractorEngine.extractTextFromPDF(fileInBytes);
+        JSONObject jsonObject = extractorEngine.extractTextFromPDF(fileInBytes);
+        var xDoc = XDoc.fromText(jsonObject.toString());
         assertNotNull(xDoc.getDocTitle());
 
     }
@@ -108,9 +111,9 @@ class ExtractorEngineTest {
         jsonDoc.put(NameUtils.DOC_TITLE, "Test document title");
         jsonDoc.put(NameUtils.DOC_TOTAL_PAGES, 1);
 
-        var xPage = new XDoc.XPage();
+        var xPage = new XPage();
         xPage.setPageNumber(1);
-        xPage.setContent("Test document content");
+        xPage.setText("Test document content");
         var jsonArray = new JSONArray();
         jsonArray.put(xPage.toJSON());
         jsonDoc.put(NameUtils.DOC_PAGES, jsonArray);

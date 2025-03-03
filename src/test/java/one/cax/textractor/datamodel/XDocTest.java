@@ -1,177 +1,76 @@
 package one.cax.textractor.datamodel;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import one.cax.textractor.utilities.NameUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class XDocTest {
+public class XDocTest {
 
-    @Test
-    void testAddPage() {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        XDoc.XPage page = new XDoc.XPage(1, "Test content");
-        
-        // Act
-        xDoc.addPage(page);
-        
-        // Assert
-        assertEquals(1, xDoc.getNumberPages());
-        assertEquals(page, xDoc.getPage(0));
-    }
+@Test
+void testToJSON() throws Exception {
+    XDoc xDoc = new XDoc();
+    xDoc.setDocTitle("Test Title");
+    xDoc.setFilename("test.pdf");
 
-    @Test
-    void testGetPage() {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        XDoc.XPage page1 = new XDoc.XPage(1, "Page 1 content");
-        XDoc.XPage page2 = new XDoc.XPage(2, "Page 2 content");
-        
-        // Act
-        xDoc.addPage(page1);
-        xDoc.addPage(page2);
-        
-        // Assert
-        assertEquals(page1, xDoc.getPage(0));
-        assertEquals(page2, xDoc.getPage(1));
-    }
+    xDoc.setMetadata(new HashMap<>());
 
-    @Test
-    void testGetFileId() {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        
-        // Act & Assert
-        assertEquals(fileId, xDoc.getFileId());
-    }
+    XPage page1 = new XPage();
+    page1.setText("Page 1 text");
+    XPage page2 = new XPage();
+    page2.setText("Page 2 text");
 
-    @Test
-    void testGetNumberPages() {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        
-        // Act
-        xDoc.addPage(new XDoc.XPage(1, "Page 1"));
-        xDoc.addPage(new XDoc.XPage(2, "Page 2"));
-        xDoc.addPage(new XDoc.XPage(3, "Page 3"));
-        
-        // Assert
-        assertEquals(3, xDoc.getNumberPages());
-    }
+    xDoc.setPages(List.of(page1, page2));
 
-    @Test
-    void testGetPages() {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        XDoc.XPage page1 = new XDoc.XPage(1, "Page 1 content");
-        XDoc.XPage page2 = new XDoc.XPage(2, "Page 2 content");
-        
-        // Act
-        xDoc.addPage(page1);
-        xDoc.addPage(page2);
-        
-        // Assert
-        assertEquals(2, xDoc.getPages().size());
-        assertTrue(xDoc.getPages().contains(page1));
-        assertTrue(xDoc.getPages().contains(page2));
-    }
+    JSONObject json = xDoc.toJSON();
 
-    @Test
-    void testToJson() throws Exception {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        xDoc.addPage(new XDoc.XPage(1, "Test content"));
-        
-        // Act
-        String json = xDoc.toJson();
-        
-        // Assert
-        assertNotNull(json);
-        assertTrue(json.contains(fileId.toString()));
-        assertTrue(json.contains("Test content"));
-        assertTrue(json.contains("page_number"));
-    }
+    assertNotNull(json);
+    assertEquals("Test Title", json.getString(NameUtils.DOC_TITLE));
+    assertEquals("test.pdf", json.getString(NameUtils.DOC_FILENAME));
+    assertEquals(2, json.getInt(NameUtils.DOC_TOTAL_PAGES));
 
-    @Test
-    void testToPrettyJson() throws Exception {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        xDoc.addPage(new XDoc.XPage(1, "Test content"));
-        
-        // Act
-        String prettyJson = xDoc.toPrettyJson();
-        
-        // Assert
-        assertNotNull(prettyJson);
-        assertTrue(prettyJson.contains(fileId.toString()));
-        assertTrue(prettyJson.contains("Test content"));
-        assertTrue(prettyJson.contains("page_number"));
-        // Pretty JSON should contain newlines
-        assertTrue(prettyJson.contains("\n"));
-    }
+    JSONArray pages = json.getJSONArray(NameUtils.DOC_PAGES);
+    assertEquals(2, pages.length());
+    assertEquals("Page 1 text", pages.getJSONObject(0).getString(NameUtils.PAGE_TEXT));
+    assertEquals("Page 2 text", pages.getJSONObject(1).getString(NameUtils.PAGE_TEXT));
+}
 
-    @Test
-    void testToJsonNode() {
-        // Arrange
-        UUID fileId = UUID.randomUUID();
-        XDoc xDoc = new XDoc(fileId);
-        xDoc.addPage(new XDoc.XPage(1, "Test content"));
-        
-        // Act
-        JsonNode jsonNode = xDoc.toJsonNode();
-        
-        // Assert
-        assertNotNull(jsonNode);
-        assertEquals(fileId.toString(), jsonNode.get("fileId").asText());
-        assertEquals(1, jsonNode.get("numberPages").asInt());
-        assertEquals(1, jsonNode.get("pages").size());
-        assertEquals(1, jsonNode.get("pages").get(0).get("page_number").asInt());
-        assertEquals("Test content", jsonNode.get("pages").get(0).get("content").asText());
-    }
+@Test
+void testFromText() throws Exception {
+    String documentText = "{\"docTitle\":\"Test Title\",\"docTotalPages\":2,\"docPages\":[{\"pageText\":\"Page 1 text\",\"pageNumber\":1},{\"pageText\":\"Page 2 text\",\"pageNumber\":2}]}";
+    XDoc xDoc = XDoc.fromText(documentText);
 
-    @Test
-    void testPageGettersAndSetters() {
-        // Arrange
-        XDoc.XPage page = new XDoc.XPage(1, "Initial content");
-        
-        // Act & Assert
-        assertEquals(1, page.getPageNumber());
-        assertEquals("Initial content", page.getContent());
-        
-        // Act
-        page.setPageNumber(2);
-        page.setContent("Updated content");
-        
-        // Assert
-        assertEquals(2, page.getPageNumber());
-        assertEquals("Updated content", page.getContent());
-    }
+    assertNotNull(xDoc);
+    assertEquals("Test Title", xDoc.getDocTitle());
+    assertEquals(2, xDoc.getTotalPages());
 
-    @Test
-    void testPageDefaultConstructor() {
-        // Arrange & Act
-        XDoc.XPage page = new XDoc.XPage();
-        
-        // Assert
-        assertEquals(0, page.getPageNumber());
-        assertNull(page.getContent());
-        
-        // Act
-        page.setPageNumber(5);
-        page.setContent("Content set after construction");
-        
-        // Assert
-        assertEquals(5, page.getPageNumber());
-        assertEquals("Content set after construction", page.getContent());
-    }
+    List<XPage> pages = xDoc.getPages();
+    assertEquals(2, pages.size());
+    assertEquals("Page 1 text", pages.get(0).getText());
+    assertEquals("Page 2 text", pages.get(1).getText());
+}
+
+@Test
+void testGetPages() {
+    XDoc xDoc = new XDoc();
+    XPage page1 = new XPage();
+    page1.setText("Page 1 text");
+    XPage page2 = new XPage();
+    page2.setText("Page 2 text");
+
+    xDoc.setPages(List.of(page1, page2));
+
+    List<XPage> pages = xDoc.getPages();
+    assertEquals(2, pages.size());
+    assertEquals("Page 1 text", pages.get(0).getText());
+    assertEquals("Page 2 text", pages.get(1).getText());
+}
 }

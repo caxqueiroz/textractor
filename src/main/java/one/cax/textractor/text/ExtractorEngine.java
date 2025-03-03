@@ -3,6 +3,7 @@ package one.cax.textractor.text;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import one.cax.textractor.utilities.NameUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -13,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
-
 
 import java.io.*;
 
@@ -131,7 +131,7 @@ public class ExtractorEngine {
         String fileName = f.getName();
         PDDocument pdDocument = Loader.loadPDF(f);
         var jsonOBject = processPDocument(pdDocument);
-        jsonOBject.put("filename", fileName);
+        jsonOBject.put(NameUtils.DOC_FILENAME, fileName);
         return jsonOBject;
     }
 
@@ -139,7 +139,7 @@ public class ExtractorEngine {
         JSONObject doc = new JSONObject();
 
         PDDocument pdDocument = Loader.loadPDF(inputInBytes);
-        doc.put("doc_title", getTitle(pdDocument));
+        doc.put(NameUtils.DOC_TITLE, getTitle(pdDocument));
         //doc.put("filename", fileName);// TODO  FIX
         return processPDocument(pdDocument);
 
@@ -147,11 +147,11 @@ public class ExtractorEngine {
 
     private JSONObject processPDocument(PDDocument pdDocument) throws IOException, JSONException {
         JSONObject doc = new JSONObject();
-        doc.put("doc_title", getTitle(pdDocument));
+        doc.put(NameUtils.DOC_TITLE, getTitle(pdDocument));
 
         PDFTextStripper pdfStripper = new PDFTextStripper();
         int nPages = pdDocument.getNumberOfPages();
-        doc.put("total_pages", String.valueOf(nPages));
+        doc.put(NameUtils.DOC_TOTAL_PAGES, String.valueOf(nPages));
         JSONArray pages = new JSONArray();
 
 
@@ -160,11 +160,11 @@ public class ExtractorEngine {
             pdfStripper.setEndPage(i);
             String pageText = pdfStripper.getText(pdDocument);
             JSONObject page = new JSONObject();
-            page.put("page_number", String.valueOf(i));
-            page.put("page_text", pageText);
+            page.put(NameUtils.PAGE_NUMBER, String.valueOf(i));
+            page.put(NameUtils.PAGE_TEXT, pageText);
             pages.put(page);
         }
-        doc.put("pages", pages);
+        doc.put(NameUtils.DOC_PAGES, pages);
 
         return doc;
     }
@@ -186,6 +186,6 @@ public class ExtractorEngine {
         pdfTextStripper.setStartPage(1);
         pdfTextStripper.setEndPage(1);
         String pageText = pdfTextStripper.getText(pdDocument);
-        return pageText.replace("\n", " ");
+        return pageText.replace("\n", " ").replace("\r", " ");
     }
 }

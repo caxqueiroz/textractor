@@ -13,7 +13,8 @@ INSERT INTO processed_files (
     file_path,
     file_size,
     app_id,
-    extracted_content,
+    ocr_content,
+    llm_content,
     created_at
 ) VALUES (
     '00000000-0000-0000-0000-000000000001',
@@ -22,6 +23,7 @@ INSERT INTO processed_files (
     '/path/to/test-file.pdf',
     2048,
     '11111111-1111-1111-1111-111111111111',
+    '{"text":"This is a test document"}',
     '{"text":"This is a test document"}',
     NOW()
 );
@@ -33,7 +35,8 @@ INSERT INTO processed_files (
     file_path,
     file_size,
     app_id,
-    extracted_content,
+    ocr_content,
+    llm_content,
     created_at
 ) VALUES (
     '00000000-0000-0000-0000-000000000002',
@@ -42,6 +45,7 @@ INSERT INTO processed_files (
     '/path/to/another-test-file.pdf',
     4096,
     '11111111-1111-1111-1111-111111111111',
+    '{"text":"This is another test document"}',
     '{"text":"This is another test document"}',
     NOW()
 );
@@ -53,7 +57,8 @@ INSERT INTO processed_files (
     file_path,
     file_size,
     app_id,
-    extracted_content,
+    ocr_content,
+    llm_content,
     created_at
 ) VALUES (
     '00000000-0000-0000-0000-000000000003',
@@ -62,6 +67,7 @@ INSERT INTO processed_files (
     '/path/to/third-test-file.pdf',
     6144,
     '22222222-2222-2222-2222-222222222222',
+    '{"text":"This is a third test document"}',
     '{"text":"This is a third test document"}',
     NOW()
 );

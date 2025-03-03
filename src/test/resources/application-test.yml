@@ -7,6 +7,10 @@ spring:
   sql:
     init:
       mode: embedded
+  ai:
+    openai:
+      base-url: https://api.openai.com/v1
+      api-key: ${OPENAI_API_KEY:sk-test-key}
 
 textractor:
   filestore:

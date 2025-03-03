@@ -8,9 +8,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Import(TestConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(properties = {
+    "spring.sql.init.mode=never"  // Disable automatic schema initialization
+})
 class AppProfileRepositoryTest {
 
     @Autowired

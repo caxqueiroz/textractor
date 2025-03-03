@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.apache.commons.math3.stat.inference.TestUtils;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -64,7 +64,7 @@ class ExtractorEngineTest {
         byte[] fileInBytes = createPdf("");
         JSONObject jsonObject = extractorEngine.extractTextFromPDF(fileInBytes);
         var xDoc = XDoc.fromText(jsonObject.toString());
-        assertEquals(" ", xDoc.getDocTitle());
+        assertEquals("  ", xDoc.getDocTitle());
 
     }
 

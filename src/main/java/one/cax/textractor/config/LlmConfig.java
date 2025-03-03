@@ -29,6 +29,8 @@ public class LlmConfig {
     public OpenAiChatModel openaiChatModel() {
         // Configure and return an instance of OpenAiChatModel
         OpenAiApi openAiApi = OpenAiApi.builder()
+                .apiKey(apiKey)
+                .baseUrl("http://localhost:8000/v1")
                 .build();
 
         return OpenAiChatModel.builder()

@@ -1,42 +1,63 @@
 package one.cax.textractor.db;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import jakarta.persistence.*;
+import one.cax.textractor.datamodel.XDoc;
+import one.cax.textractor.datamodel.XDocAttributeConverter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table("processed_files")
+/**
+ * Entity representing a processed file in the database.
+ * Uses JPA annotations for ORM mapping.
+ */
+@Entity
+@Table(name = "processed_files")
 public class ProcessedFiles {
 
     @Id
-    @Column("file_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "file_id")
     private UUID fileId;
 
-    @Column("file_hash")
+    @Column(name = "file_hash", nullable = false, unique = true)
     private String fileHash;
 
-    @Column("file_name")
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Column("file_path")
+    @Column(name = "file_path", nullable = false)
     private String filePath;
 
-    @Column("file_size")
+    @Column(name = "file_size", nullable = false)
     private long fileSize;
 
-    @Column("app_id")
+    @Column(name = "app_id", nullable = false)
     private UUID appId;
 
-    @Column("ocr_content")
-    private String ocrContent;
-    
-    @Column("processing_status")
+    @Column(name = "processing_status", nullable = false)
     private String processingStatus;
-    
-    @Column("llm_content")
-    private String llmContent;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Convert(converter = XDocAttributeConverter.class)
+    @Column(name = "ocr_content", columnDefinition = "jsonb")
+    private XDoc ocrContent;
+
+    @Convert(converter = XDocAttributeConverter.class)
+    @Column(name = "llm_content", columnDefinition = "jsonb")
+    private XDoc llmContent;
+
+
+    /**
+     * Default constructor
+     */
+    public ProcessedFiles() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters and setters
 
     public UUID getFileId() {
         return fileId;
@@ -86,28 +107,35 @@ public class ProcessedFiles {
         this.appId = appId;
     }
 
-    public String getOcrContent() {
-        return ocrContent;
-    }
-
-    public void setOcrContent(String ocrContent) {
-        this.ocrContent = ocrContent;
-    }
-    
-    public String getLlmContent() {
-        return llmContent;
-    }
-    
-    public void setLlmContent(String llmContent) {
-        this.llmContent = llmContent;
-    }
-    
-    
     public String getProcessingStatus() {
         return processingStatus;
     }
-    
+
     public void setProcessingStatus(String processingStatus) {
         this.processingStatus = processingStatus;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public XDoc getOcrContent() {
+        return ocrContent;
+    }
+
+    public void setOcrContent(XDoc ocrContent) {
+        this.ocrContent = ocrContent;
+    }
+
+    public XDoc getLlmContent() {
+        return llmContent;
+    }
+
+    public void setLlmContent(XDoc llmContent) {
+        this.llmContent = llmContent;
     }
 }

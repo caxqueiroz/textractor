@@ -1,4 +1,4 @@
--- Schema for H2 in-memory database for tests
+-- Schema for PostgreSQL database
 
 -- Create processed_files table
 CREATE TABLE IF NOT EXISTS processed_files (
@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS processed_files (
     file_path VARCHAR(255),
     file_size BIGINT NOT NULL,
     app_id UUID NOT NULL,
-    ocr_content VARCHAR, -- Use VARCHAR for JSON in H2 (equivalent to JSONB in PostgreSQL)
-    llm_content CLOB,
+    ocr_content JSONB,
+    llm_content TEXT,
     processing_status VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS processed_files (
 CREATE TABLE IF NOT EXISTS app_profiles (
     id UUID PRIMARY KEY,
     profile_name VARCHAR(255) NOT NULL UNIQUE,
-    profile_description CLOB,
+    profile_description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

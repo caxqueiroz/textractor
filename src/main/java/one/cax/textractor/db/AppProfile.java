@@ -1,17 +1,20 @@
 package one.cax.textractor.db;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
+import jakarta.persistence.*;
 import java.util.UUID;
 
-@Table("app_profiles")
+@Entity
+@Table(name = "app_profiles")
 public class AppProfile {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(name = "profile_name")
     private String profileName;
+    
+    @Column(name = "profile_description")
     private String profileDescription;
 
     public UUID getId() {

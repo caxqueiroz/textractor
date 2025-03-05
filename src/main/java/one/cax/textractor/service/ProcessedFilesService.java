@@ -1,6 +1,7 @@
 package one.cax.textractor.service;
 
 
+import one.cax.textractor.datamodel.XDoc;
 import one.cax.textractor.db.ProcessedFiles;
 import one.cax.textractor.db.ProcessedFilesRepository;
 import org.slf4j.LoggerFactory;
@@ -122,16 +123,18 @@ public class ProcessedFilesService {
      * @param llmOutput The LLM output to set
      * @return True if the update was successful, false otherwise
      */
-    public boolean updateLlmOutput(String fileId, String llmOutput) {
+    public boolean updateLlmOutput(String fileId, XDoc llmOutput) {
         try {
             UUID uuid = UUID.fromString(fileId);
             Optional<ProcessedFiles> fileOpt = processedFilesRepository.findById(uuid);
             
             if (fileOpt.isPresent()) {
+
                 ProcessedFiles file = fileOpt.get();
                 file.setLlmContent(llmOutput);
                 processedFilesRepository.save(file);
                 logger.info("Updated LLM output for file {}", fileId);
+                
                 return true;
             } else {
                 logger.error("File with ID {} not found", fileId);

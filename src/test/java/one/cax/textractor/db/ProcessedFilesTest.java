@@ -1,5 +1,6 @@
 package one.cax.textractor.db;
 
+import one.cax.textractor.datamodel.XDoc;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -18,7 +19,8 @@ class ProcessedFilesTest {
         String filePath = "/path/to/file.pdf";
         long fileSize = 1024L;
         UUID appId = UUID.randomUUID();
-        String extractedContent = "{\"text\":\"extracted content\"}";
+        XDoc xDoc = new XDoc();
+        xDoc.setDocTitle("Test Document");
         
         // Act
         processedFiles.setFileId(fileId);
@@ -27,7 +29,7 @@ class ProcessedFilesTest {
         processedFiles.setFilePath(filePath);
         processedFiles.setFileSize(fileSize);
         processedFiles.setAppId(appId);
-        processedFiles.setOcrContent(extractedContent);
+        processedFiles.setOcrContent(xDoc);
         
         // Assert
         assertEquals(fileId, processedFiles.getFileId());
@@ -36,7 +38,7 @@ class ProcessedFilesTest {
         assertEquals(filePath, processedFiles.getFilePath());
         assertEquals(fileSize, processedFiles.getFileSize());
         assertEquals(appId, processedFiles.getAppId());
-        assertEquals(extractedContent, processedFiles.getOcrContent());
+        assertEquals(xDoc, processedFiles.getOcrContent());
     }
 
     @Test

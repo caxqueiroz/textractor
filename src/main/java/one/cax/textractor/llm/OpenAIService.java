@@ -187,13 +187,12 @@ public class OpenAIService {
                     XDoc processedDoc = new XDoc();
                     processedDoc.setId(fileId);
 
-                    
                     // Convert to JSON for logging
                     String processedJson = processedDoc.toJSON().toString();
                     logger.info("Processed XDoc: {}", processedJson);
                     ProcessedFiles processedFiles = new ProcessedFiles();
                     processedFiles.setFileId(fileId);
-                    processedFiles.setLlmContent(processedJson);
+                    processedFiles.setLlmContent(processedDoc);
                     processedFiles.setFileName(fileProcessing.getFileName());
                     processedFiles.setFileSize(fileProcessing.getFileSize());
                     processedFiles.setFileHash(fileProcessing.getFileHash());

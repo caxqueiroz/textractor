@@ -126,7 +126,7 @@ public class AbbyyEnginePool {
                 logger.info("Processing file: {}", fileProcessing.getFileHash());
                 IFRDocument frDocument = engine.CreateFRDocument();
                 frDocument.AddImageFileFromMemory(fileProcessing.getFileContent(), null, null, null, "");
-                
+                frDocument.Process(null);
                 // Get the pages collection
                 IFRPages pages = frDocument.getPages();
                 // Process each page
@@ -154,7 +154,7 @@ public class AbbyyEnginePool {
                     processedFile.setFilePath(filePath);
                     processedFile.setFileSize(fileProcessing.getFileSize());
                     processedFile.setAppId(UUID.fromString(fileProcessing.getAppId()));
-                    processedFile.setOcrContent(xDoc.toJSON().toString());
+                    processedFile.setOcrContent(xDoc);
                     processedFilesService.addProcessedFile(processedFile);
                 } else {
                     logger.warn("ProcessedFilesService is null, cannot save processed file");

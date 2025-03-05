@@ -1,15 +1,17 @@
 package one.cax.textractor.db;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 
 /**
  * Repository for accessing processed files in the database
  */
-public interface ProcessedFilesRepository extends CrudRepository<ProcessedFiles, UUID> {
+@Repository
+public interface ProcessedFilesRepository extends JpaRepository<ProcessedFiles, UUID> {
 
     /**
      * Find a processed file by its hash
@@ -23,5 +25,5 @@ public interface ProcessedFilesRepository extends CrudRepository<ProcessedFiles,
      * @param appId the app ID to find files for
      * @return all processed files for the app
      */
-    Iterable<ProcessedFiles> findByAppId(UUID appId);
+    List<ProcessedFiles> findByAppId(UUID appId);
 }

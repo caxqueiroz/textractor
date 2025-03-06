@@ -18,17 +18,34 @@ import java.nio.charset.StandardCharsets;
 public class XDocAttributeConverter implements AttributeConverter<XDoc, String> {
     
     private static final Logger logger = LoggerFactory.getLogger(XDocAttributeConverter.class);
-    private final ObjectMapper objectMapper;
     
     @Autowired
+    private ObjectMapper objectMapper;
+    
+    /**
+     * Default no-args constructor required by JPA
+     */
+    public XDocAttributeConverter() {
+        logger.debug("XDocAttributeConverter created with no-args constructor");
+    }
+    
+    /**
+     * Constructor with ObjectMapper for use by Spring
+     */
     public XDocAttributeConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+        logger.debug("XDocAttributeConverter constructed with ObjectMapper: {}", objectMapper);
     }
     
     @Override
     public String convertToDatabaseColumn(XDoc attribute) {
         if (attribute == null) {
             return null;
+        }
+        
+        if (objectMapper == null) {
+            logger.error("ObjectMapper is null in convertToDatabaseColumn. This indicates a configuration issue.");
+            throw new IllegalStateException("ObjectMapper not initialized in XDocAttributeConverter");
         }
         
         try {
@@ -53,6 +70,11 @@ public class XDocAttributeConverter implements AttributeConverter<XDoc, String> 
     public XDoc convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isEmpty()) {
             return null;
+        }
+        
+        if (objectMapper == null) {
+            logger.error("ObjectMapper is null in convertToEntityAttribute. This indicates a configuration issue.");
+            throw new IllegalStateException("ObjectMapper not initialized in XDocAttributeConverter");
         }
         
         try {

@@ -23,13 +23,6 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class JpaConfig {
 
-    private final ObjectMapper objectMapper;
-
-    @Autowired
-    public JpaConfig(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     /**
      * Configures the entity manager factory.
      * 
@@ -47,7 +40,6 @@ public class JpaConfig {
         em.setJpaVendorAdapter(vendorAdapter);
         
         Properties properties = new Properties();
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.setProperty("hibernate.jdbc.lob.non_contextual_creation", "true");
         properties.setProperty("hibernate.format_sql", "true");
         properties.setProperty("hibernate.use_sql_comments", "true");
